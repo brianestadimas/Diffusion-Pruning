@@ -21,7 +21,7 @@ parser.add_argument("--pruning_ratio", type=float, default=0.3)
 parser.add_argument("--batch_size", type=int, default=128)
 parser.add_argument("--device", type=str, default='cpu')
 #parser.add_argument("--pruner", type=str, default='taylor', choices=['taylor', 'random', 'magnitude', 'reinit', 'diff-pruning'])
-parser.add_argument("--pruner", type=str, default='random', choices=['random', 'magnitude', 'reinit'])
+parser.add_argument("--pruner", type=str, default='random', choices=['random', 'magnitude', 'reinit', 'activation'])
 
 #parser.add_argument("--thr", type=float, default=0.05, help="threshold for diff-pruning")
 
@@ -65,8 +65,8 @@ if __name__=='__main__':
             imp = tp.importance.RandomImportance()
         elif args.pruner == 'magnitude':
             imp = tp.importance.MagnitudeImportance()
-        elif args.pruner == 'diff-pruning':
-            imp = tp.importance.TaylorImportance(multivariable=False) 
+        elif args.pruner == 'activation':
+            imp = tp.importance.ActivationImportance()
         else:
             raise NotImplementedError
 
@@ -118,14 +118,15 @@ if __name__=='__main__':
                     if hasattr(m, 'reset_parameters'):
                         m.reset_parameters()
             reset_parameters(unet)
-
     
     pipeline = LDMPipeline(
         unet=unet,
         vqvae=vqvae,
         scheduler=scheduler,
     ).to(torch_device)
+
     pipeline.save_pretrained(args.save_path)
+
     if args.pruning_ratio>0:
         os.makedirs(os.path.join(args.save_path, "pruned"), exist_ok=True)
         torch.save(unet, os.path.join(args.save_path, "pruned", "unet_pruned.pth"))

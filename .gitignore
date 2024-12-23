@@ -14,6 +14,16 @@ checkpoints
 *.so
 
 cache
+result
+result_70
+result_ldm_original
+result_ldm_original_nonseparate
+result_original_finetuned
+result_ldm_structured
+dataset
+pruned_model
+pruned_unet_celebahq.pth
+pruned_vqvae_celebahq.pth
 
 # tests and logs
 tests/fixtures/cached_*_text.txt
@@ -23,7 +33,6 @@ lang_code_data/
 docker
 doc
 _typos.toml
-data
 docs
 
 ldm_generated_image.png
@@ -158,7 +167,6 @@ runs
 /examples/rag/sweep
 
 # data
-/data
 serialization_dir
 
 # emacs
